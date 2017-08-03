@@ -421,17 +421,17 @@ class TestSwift3Obj(Swift3TestCase):
             'PUT', '/bucket/object',
             swob.HTTPCreated,
             {'X-Amz-Copy-Source': '/bucket/src_obj?foo=bar'})
-        self.assertEquals(code, 'InvalidArgument')
+        self.assertEqual(code, 'InvalidArgument')
         code = self._test_method_error(
             'PUT', '/bucket/object',
             swob.HTTPCreated,
             {'X-Amz-Copy-Source': '/bucket/src_obj?versionId=foo&bar=baz'})
-        self.assertEquals(code, 'InvalidArgument')
+        self.assertEqual(code, 'InvalidArgument')
         code = self._test_method_error(
             'PUT', '/bucket/object',
             swob.HTTPCreated,
             {'X-Amz-Copy-Source': '/bucket/src_obj?versionId=foo'})
-        self.assertEquals(code, 'NotImplemented')
+        self.assertEqual(code, 'NotImplemented')
         code = self._test_method_error(
             'PUT', '/bucket/object',
             swob.HTTPCreated,
@@ -676,17 +676,17 @@ class TestSwift3Obj(Swift3TestCase):
         status, headers, body = self._test_object_PUT_copy(
             swob.HTTPOk, src_path='/some/source?versionId=null',
             put_header={'Date': date_header}, timestamp=timestamp)
-        self.assertEquals(status.split()[0], '200')
-        self.assertEquals(headers['Content-Type'], 'application/xml')
+        self.assertEqual(status.split()[0], '200')
+        self.assertEqual(headers['Content-Type'], 'application/xml')
         self.assertTrue(headers.get('etag') is None)
         self.assertTrue(headers.get('x-amz-meta-something') is None)
         elem = fromstring(body, 'CopyObjectResult')
-        self.assertEquals(elem.find('LastModified').text, last_modified)
-        self.assertEquals(elem.find('ETag').text, '"%s"' % self.etag)
+        self.assertEqual(elem.find('LastModified').text, last_modified)
+        self.assertEqual(elem.find('ETag').text, '"%s"' % self.etag)
 
         _, _, headers = self.swift.calls_with_headers[-1]
-        self.assertEquals(headers['X-Copy-From'], '/some/source')
-        self.assertEquals(headers['Content-Length'], '0')
+        self.assertEqual(headers['X-Copy-From'], '/some/source')
+        self.assertEqual(headers['Content-Length'], '0')
 
     @s3acl
     def test_object_PUT_copy_no_slash(self):

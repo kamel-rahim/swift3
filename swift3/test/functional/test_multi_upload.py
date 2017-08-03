@@ -299,7 +299,7 @@ class TestSwift3MultiUpload(Swift3FunctionalTestCase):
 
         status, headers, body = \
             self.conn.make_request('HEAD', bucket, key)
-        self.assertEquals(status, 200)
+        self.assertEqual(status, 200)
         self.assertCommonResponseHeaders(headers)
         self.assertTrue('etag' in headers)
         etag = headers['etag']
