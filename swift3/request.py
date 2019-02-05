@@ -757,6 +757,14 @@ class Request(swob.Request):
         if self.message_length() > max_length:
             raise MalformedXML()
 
+        if te or self.message_length():
+            # Limit the read similar to how SLO handles manifests
+            body = self.body_file.read(max_length)
+        else:
+            # No (or zero) Content-Length provided, and not chunked transfer;
+            # no body. Assume zero-length, and enforce a required body below.
+            return None
+
         # Limit the read similar to how SLO handles manifests
         body = self.body_file.read(max_length)
 
