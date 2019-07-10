@@ -257,8 +257,8 @@ class BucketController(Controller):
 
         SubElement(elem, 'MaxKeys').text = str(tag_max_keys)
 
-        if 'delimiter' in req.params:
-            SubElement(elem, 'Delimiter').text = req.params['delimiter']
+        if delimiter:
+            SubElement(elem, 'Delimiter').text = delimiter
 
         if encoding_type is not None:
             SubElement(elem, 'EncodingType').text = encoding_type
