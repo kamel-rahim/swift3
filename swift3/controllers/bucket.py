@@ -115,23 +115,36 @@ class BucketController(Controller):
             'format': 'json',
             'limit': max_keys + 1,
         }
-        if 'marker' in req.params:
-            query.update({'marker': req.params['marker']})
-        if 'prefix' in req.params:
+
+        delimiter = req.params.get('delimiter', None)
+        if delimiter == '':
+            delimiter = None
+        if delimiter is not None and not isinstance(delimiter, unicode):
+            delimiter = delimiter.decode('utf-8')
+        if 'marker' in req.params and req.params['marker'] != '':
+            marker = req.params['marker']
+            if delimiter and marker[-1] == delimiter:
+                marker = marker[:-1] + chr(ord(marker[-1]) + 1)
+            query.update({'marker': marker})
+        prefix = req.params.get('prefix', None)
+        if prefix is not None:
             query.update({'prefix': req.params['prefix']})
-        if 'delimiter' in req.params:
-            query.update({'delimiter': req.params['delimiter']})
 
         # GET Bucket (List Objects) Version 2 parameters
         is_v2 = int(req.params.get('list-type', '1')) == 2
         fetch_owner = False
         if is_v2:
             if 'start-after' in req.params:
-                query.update({'marker': req.params['start-after']})
+                marker = req.params['start-after']
+                if delimiter is not None and marker[-1] == delimiter:
+                    marker = marker[:-1] + chr(ord(marker[-1]) + 1)
+                query.update({'marker': marker})
             # continuation-token overrides start-after
             if 'continuation-token' in req.params:
-                decoded = b64decode(req.params['continuation-token'])
-                query.update({'marker': decoded})
+                marker = b64decode(req.params['continuation-token'])
+                if delimiter is not None and marker[-1] == delimiter:
+                    marker = marker[:-1] + chr(ord(marker[-1]) + 1)
+                query.update({'marker': marker})
             if 'fetch-owner' in req.params:
                 fetch_owner = config_true_value(req.params['fetch-owner'])
 
